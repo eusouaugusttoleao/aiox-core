@@ -1,0 +1,142 @@
+# ===============================================================================
+# Squad C: AI CFO — O Cerebro Financeiro
+# Domain: Gestao Financeira, ROI de Trafego, Meta R$10.4M
+# Ecosystem: Sellect Intelligence / Mentoria AURA
+# Created: 2026-03-24
+# Version: 1.0.0
+# ===============================================================================
+
+squad:
+  name: aura-cfo
+  display_name: "AURA AI CFO Squad"
+  version: "1.0.0"
+  domain: "Gestao financeira, controle de custos, ROI de trafego, meta de faturamento"
+  description: |
+    Cerebro financeiro do ecossistema AURA. Monitora faturamento alvo de
+    R$10.4M/ano, controla custos de trafego (meta 33% crescimento/mes),
+    producao de eventos (infraestrutura VIP, sofa preto, TPS), investimentos
+    em souvenirs e calcula ROI real cruzando trafego x vendas presenciais.
+
+  philosophy: |
+    "Numeros nao mentem. Decisoes sem dados sao apostas."
+    Gestao financeira que protege o crescimento — cada real investido
+    deve ter rastreabilidade e retorno mensuravel.
+
+  financial_targets:
+    annual_revenue: "R$ 10.400.000"
+    monthly_revenue: "R$ 866.666"
+    traffic_growth: "33%/mes"
+    max_cpl: "Calculado dinamicamente com base na meta"
+
+  entry_agent: cfo-chief
+  created_by: "claude-opus-4.6"
+  created_at: "2026-03-24"
+
+# ─────────────────────────────────────────────────────────────────────────
+# PLANO SEMANAL (source of truth operacional)
+# ─────────────────────────────────────────────────────────────────────────
+
+weekly_execution_plan:
+  source: "../WEEKLY-EXECUTION-PLAN.yaml"
+  description: "Plano operacional de 12 semanas com instrucoes detalhadas por squad"
+  scope_for_this_squad: "cfo_squad"
+  what_to_read: |
+    Para cada semana, consulte a chave `cfo_squad` que contem:
+    - meta semanal (R$ 216.666)
+    - produtos foco por semana
+    - KPI primario e secundario
+    - alertas financeiros
+    - revisao de bloco (ao final de cada bloco)
+  rules:
+    - "SEMPRE consultar o plano para saber quais produtos priorizar na semana"
+    - "Meta semanal de R$ 216.666 e non-negotiable"
+    - "Revisao de bloco obrigatoria nas semanas 3, 6, 9 e 12"
+    - "Se CPL > 2x media por 3 dias → trigger de escalacao para Growth"
+    - "Semana 12: consolidar receita total da turma + ROI + projecao"
+
+  metricas_por_bloco:
+    source: "../WEEKLY-EXECUTION-PLAN.yaml#metricas_por_bloco"
+    description: |
+      KPIs de sucesso por bloco: retencao, NPS, rituais completados, marcos atingidos.
+      Bloco 4 inclui: conversao Fire Class (40%) e depoimentos gravados (50%).
+
+  escalacao:
+    source: "../WEEKLY-EXECUTION-PLAN.yaml#escalacao"
+    triggers_financeiros:
+      - "CPL > 2x media (3 dias) → Growth Squad"
+      - "Churn > 15% no bloco → Maestro + Support + Content"
+
+# ─────────────────────────────────────────────────────────────────────────
+# AGENT REGISTRY
+# ─────────────────────────────────────────────────────────────────────────
+
+tiers:
+  tier_0:
+    name: "Financial Strategy"
+    agents: [cfo-chief]
+    purpose: "Visao consolidada, alertas, decisoes estrategicas"
+  tier_1:
+    name: "Financial Operations"
+    agents: [profit-guard, traffic-analyst]
+    purpose: "Fluxo de caixa, ROI de trafego, metricas operacionais"
+
+agents:
+  cfo-chief:
+    file: agents/cfo-chief.md
+    tier: 0
+    icon: "🧠"
+    focus: "Estrategia financeira, consolidacao, alertas de meta"
+
+  profit-guard:
+    file: agents/profit-guard.md
+    tier: 1
+    icon: "💰"
+    focus: "Fluxo de caixa, gateway de pagamento, custos de evento"
+
+  traffic-analyst:
+    file: agents/traffic-analyst.md
+    tier: 1
+    icon: "📊"
+    focus: "ROI de trafego, custo por lead, conversao evento presencial"
+
+# ─────────────────────────────────────────────────────────────────────────
+# INTEGRATION
+# ─────────────────────────────────────────────────────────────────────────
+
+handoffs:
+  cfo-chief:
+    routes_to: [profit-guard, traffic-analyst]
+  profit-guard:
+    collaborates_with: [traffic-analyst]
+    escalates_to: [cfo-chief]
+  traffic-analyst:
+    collaborates_with: [profit-guard]
+    escalates_to: [cfo-chief]
+
+n8n:
+  integrations:
+    payment_gateway:
+      platforms: ["Stripe", "Hotmart", "Kiwify"]
+      webhook: "POST /aura-cfo/payment-event"
+      events: ["payment.confirmed", "subscription.created", "refund.processed"]
+    traffic:
+      platforms: ["Meta Ads", "Google Ads"]
+      sync: "Diario via API"
+      metrics: ["spend", "impressions", "clicks", "leads", "cpl"]
+    sheets:
+      destination: "Google Sheets — Financial Dashboard"
+      tabs: ["Revenue", "Costs", "Traffic ROI", "Events", "Alerts"]
+
+  workflows:
+    daily_revenue:
+      trigger: "Cron — 23h59 diario"
+      action: "Consolidar pagamentos do dia → atualizar Sheets → verificar meta"
+    traffic_roi:
+      trigger: "Cron — semanal (domingo)"
+      action: "Cruzar investimento trafego × leads × vendas → calcular ROI"
+    cpl_alert:
+      trigger: "Evento — novo lead"
+      action: "Calcular CPL rolling 7 dias → alertar se acima do limite"
+    monthly_report:
+      trigger: "Cron — dia 1 de cada mes"
+      action: "Relatorio financeiro completo → enviar para CSO"

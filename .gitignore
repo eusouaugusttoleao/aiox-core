@@ -60,6 +60,7 @@ squads/*
 # Published squads (whitelisted for repository)
 !squads/claude-code-mastery/
 !squads/aura-shared/
+!squads/aura-cfo/
 keys/
 *.secret
 *.credentials
